@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "../spDa.h"
 
@@ -49,18 +51,20 @@ int main(void)
     Point3D pa = {1, 3, 4};
     Point3D pb = {2, 4, 4};
     Point3D pc = {8, 1, 9};
-    Point3D ps[] = {pa, pb, pc};        // array of points
+    // Point3D ps[] = {pa, pb, pc};        // array of points
 
     // NOTE: ARRAY_LEN(x): finds the length of vanilla c array 'x'
     // Append the items
-    for (size_t i = 0; i < ARRAY_LEN(ps); ++i)         spda_append(points, ps[i % 3]);
+    // for (size_t i = 0; i < ARRAY_LEN(ps); ++i)         spda_append(points, ps[i % 3]);
+    spda_append_many(points, pa, pb, pc, pa, pb, pc);
 
     Color ca = {123, 105, 97, 69};
     Color cb = {12, 11, 18, 143};
     Color cc = {90, 10, 98, 42};
-    Color cs[] = {ca, cb, cc};
+    // Color cs[] = {ca, cb, cc};           // array of colors 
     
-    for (size_t i = 0; i < ARRAY_LEN(cs); ++i)         spda_append(colors, cs[i % 3]);
+    // for (size_t i = 0; i < ARRAY_LEN(cs); ++i)         spda_append(colors, cs[i % 3]);
+    spda_append_many(colors, ca, cb, cc, ca, cb, cc);
 
     // Print the items
     printf("\nPoints: \n");
@@ -68,6 +72,15 @@ int main(void)
     printf("\nColors: \n");
     spda_print(colors, printColor);
     
+    // Clearing the array 
+    spda_clear(colors);
+    spda_clear(points);
+
+    printf("\nPoints: \n");
+    spda_print(points, printPoint3D);
+    printf("\nColors: \n");
+    spda_print(colors, printColor);
+
     printf("\n");
     printMetadata(points);
     printMetadata(colors);

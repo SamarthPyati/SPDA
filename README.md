@@ -37,9 +37,7 @@ int main() {
     Point3D p2 = {4.0, 5.0, 6.0};
     Point3D p2 = {7.0, 8.0, 10.0};
     
-    spda_append(points, p1);
-    spda_append(points, p2);
-    spda_append(points, p3);
+    spda_append_many(points, p1, p2, p3);
     
     printf("Array contents:\n");
     spda_print(points, printPoint3D);
@@ -60,6 +58,7 @@ int main() {
 ### Element Manipulation
 
 - `spda_append(array, value)`: Append a value to the end of the array
+- `spda_append_many(array, ...)`: Append all variadic number of values to the end of the array
 - `spda_pop(array)`: Remove the last element from the array
 - `spda_pop_ret(array)`: Remove the last element from the array and returns the value
 - `spda_insert(array, idx, value)`: Insert a value at the specified index

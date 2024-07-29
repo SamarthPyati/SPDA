@@ -8,11 +8,8 @@
 #ifndef SPDA_H_
 #define SPDA_H_
 
-#include <stdlib.h>
-#include <string.h>
-
 /* 
-** Memory Layout: **
+** Memory Layout **
 size_t capacity = max elements that array can contain;
 size_t length = number of elements the array actually contains;
 size_t stride = size of each items in array;
@@ -45,8 +42,10 @@ void _spda_field_set(void *array, size_t field, size_t value);
 
 // Resize the array by growth factor (TODO: Make this take a arg)
 void *_spda_resize(void *array);
+void *_spda_resize_spec(void *array, size_t size);      // resize the array by a specific amount 
 
 void *_spda_append(void *array, const void* value);
+void *_spda_append_many(void *array, void *items, size_t item_count);
 void _spda_pop(void *array);
 
 void *_spda_insert(void *array, int idx, const void* value);
@@ -73,6 +72,12 @@ void spda_clear(void *array);
         array = _spda_append(array, &temp);      \
     } while (0)
 
+#define spda_append_many(array, ...) \
+    do { \
+        __typeof__(*array) _temp[] = {__VA_ARGS__}; \
+        array = _spda_append_many(array, _temp, sizeof(_temp) / sizeof(_temp[0])); \
+    } while (0)
+
 #define spda_pop(array) _spda_pop(array)
 #define spda_pop_ret(array, dest) _spda_pop_ret(array, dest)
 
@@ -86,7 +91,7 @@ void spda_clear(void *array);
 #define spda_remove_ret(array, idx, dest) _spda_remove_ret(array, idx, dest)
 
 #define spda_clear(array) \
-    _spda_field_set(array, LENGTH, 0);
+    _spda_field_set(array, LENGTH, 0)
 
 #define spda_set_length(array, value) \
     _spda_field_set(array, LENGTH, value)

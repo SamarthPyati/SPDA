@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "spDa.h"
 
@@ -76,6 +78,39 @@ void *_spda_append(void *array, const void* value)
     return array;
 }
 
+void *_spda_resize_spec(void *array, size_t size)
+{
+    size_t *header = (size_t *)array - FIELD_COUNT;
+    size_t new_cap = size;         
+    size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
+    if (header == NULL) 
+    {
+        raise("MEM_ALLOCATION", "Header was not allocated properly."); 
+        exit(EXIT_FAILURE);
+    }
+    header = realloc(header, new_size);
+    if (header == NULL)
+    {
+        raise("MEM_ALLOCATION","Failed to realloc the header and the array.");
+        exit(EXIT_FAILURE);
+    }
+    header[CAPACITY] = new_cap;
+    return (void *)(header + FIELD_COUNT);
+}
+
+void *_spda_append_many(void *array, void *items, size_t item_count)
+{
+    size_t stride = spda_stride(array);
+    char *item_ptr = (char *)items;
+    for (size_t i = 0; i < item_count; ++i)
+    {
+        array = _spda_append(array, item_ptr);
+        item_ptr += stride;
+    }
+    return array;
+}
+
+
 void _spda_pop(void *array)
 {   
     size_t length = spda_len(array);
@@ -153,4 +188,3 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
         spdaElemPrinter(p);
     }
 }
-
