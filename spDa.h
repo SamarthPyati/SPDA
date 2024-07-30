@@ -8,6 +8,8 @@
 #ifndef SPDA_H_
 #define SPDA_H_
 
+#include <stdio.h>          // size_t 
+
 /* 
 ** Memory Layout **
 size_t capacity = max elements that array can contain;
@@ -84,7 +86,7 @@ void spda_clear(void *array);
 #define spda_insert(array, idx, value)           \
     do {                                         \
         __auto_type temp = value;                \
-        _spda_insert(array, idx, &temp);         \
+        array = _spda_insert(array, idx, &temp); \
     } while (0)
 
 #define spda_remove(array, idx) _spda_remove(array, idx)

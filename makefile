@@ -1,6 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra 
 LDFLAGS = -lm
+
+BUILDFLAGS = -Wall -Wextra -c -fPIC
 
 # Directories
 SRC_DIR = .
@@ -10,6 +12,7 @@ BIN_DIR = bin
 # Source files
 SRC = $(SRC_DIR)/spDa.c
 HEADER = $(SRC_DIR)/spDa.h
+OBJ = $(SRC_DIR)/spDa.o
 
 # Test executables
 BASIC_TEST = $(BIN_DIR)/basic_test
@@ -28,6 +31,9 @@ $(MAIN_TEST): $(SRC) $(TEST_DIR)/test.c $(HEADER) | $(BIN_DIR)
 
 $(BIN_DIR):
 	mkdir -p $@
+
+build:
+	$(CC) -shared -o libspda.so -fPIC $(SRC)
 
 test: $(BASIC_TEST) $(MAIN_TEST)
 	./$(BASIC_TEST)
