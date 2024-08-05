@@ -10,7 +10,17 @@ void print_double(void *elem) {
 
 // Helper function to compare doubles with a small epsilon for floating-point precision
 int double_equals(double a, double b) {
-    return fabs(a - b) < 1e-6;
+    return fabs(a - b) < 1e-9;
+}
+
+void printInt(void *elem)
+{
+    printf("%d ", *(int *)elem);
+}
+
+int comparInt(const void *a, const void *b)
+{
+    return *(int *)a - *(int *)b;
 }
 
 int main() {
@@ -59,9 +69,20 @@ int main() {
     array = _spda_resize(array);
     assert(spda_cap(array) == old_cap * SPDA_GROWTH_FACTOR);
 
+
     // Test destruction
     spda_destroy(array);
 
-    printf("All tests passed successfully!\n");
+    // Sorting the array 
+    int *a = spda_create(int);
+    spda_append_many(a, 1, 31, 57, 1, 9, 0, 12, 4, -1, -10);
+    printf("Before: ");
+    spda_print(a, printInt);
+    spda_sort(a, comparInt);
+    spda_print(a, printInt);
+
+
+    printf("\nAll tests passed successfully!\n");
+ 
     return 0;
 }

@@ -56,6 +56,10 @@ void *_spda_remove(void *array, int idx);
 void _spda_pop_ret(void *array, void *dest);                 // return the popped item
 void *_spda_remove_ret(void *array, int idx, void *dest);    // return the popped item
 
+
+// Utilities 
+void spda_sort(void *array, int (*compar)(const void *, const void *));  // qsort (wrapper)
+
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
 

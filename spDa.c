@@ -180,6 +180,12 @@ void *_spda_remove_ret(void *array, int idx, void *dest)
     return array;
 }
 
+
+void spda_sort(void *array, int (*compar)(const void *, const void *))
+{   
+    qsort(array, spda_len(array), spda_stride(array), compar);
+}
+
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
 {   
     for (size_t i = 0; i < spda_len(array); ++i) 
@@ -187,4 +193,5 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
         void *p = (array + i * spda_stride(array));
         spdaElemPrinter(p);
     }
+    printf("\n");
 }
