@@ -17,17 +17,21 @@ OBJ = $(SRC_DIR)/spDa.o
 # Test executables
 BASIC_TEST = $(BIN_DIR)/basic_test
 MAIN_TEST = $(BIN_DIR)/main_test
+UTILITY_TEST = $(BIN_DIR)/utility_test
 
 # Targets
 .PHONY: all clean test
 
-all: $(BASIC_TEST) $(MAIN_TEST)
+all: $(BASIC_TEST) $(MAIN_TEST) $(UTILITY_TEST)
 
 $(BASIC_TEST): $(SRC) $(TEST_DIR)/basic.c $(HEADER) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< $(TEST_DIR)/basic.c -o $@ $(LDFLAGS)
 
 $(MAIN_TEST): $(SRC) $(TEST_DIR)/test.c $(HEADER) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $< $(TEST_DIR)/test.c -o $@ $(LDFLAGS)
+
+$(UTILITY_TEST): $(SRC) $(TEST_DIR)/utility.c $(HEADER) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< $(TEST_DIR)/utility.c -o $@ $(LDFLAGS)
 
 $(BIN_DIR):
 	mkdir -p $@

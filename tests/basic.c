@@ -71,19 +71,23 @@ int main(void)
     spda_print(points, printPoint3D);
     printf("\nColors: \n");
     spda_print(colors, printColor);
-    
-    // Clearing the array 
-    spda_clear(colors);
-    spda_clear(points);
-
-    printf("\nPoints: \n");
-    spda_print(points, printPoint3D);
-    printf("\nColors: \n");
-    spda_print(colors, printColor);
 
     printf("\n");
     printMetadata(points);
     printMetadata(colors);
+
+    // Copy the array
+    printf("Original Arrays: \n");
+    spda_print(points, printPoint3D);
+    spda_print(colors, printColor);
+
+    // src 
+    void *cpoints = spda_copy(points);
+    void *ccolors = spda_copy(colors);
+
+    printf("Copied Arrays: \n");
+    spda_print(cpoints, printPoint3D);
+    spda_print(ccolors, printColor);
 
     // Free the array 
     spda_destroy(points);

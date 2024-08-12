@@ -180,10 +180,53 @@ void *_spda_remove_ret(void *array, int idx, void *dest)
     return array;
 }
 
+void *spda_copy(void *src)
+{
+    if (src == NULL) {
+        raise("SPDA_COPY_ERR", "source array is NULL!");
+        return NULL;
+    }
+
+    size_t capacity = spda_cap(src);
+    size_t length = spda_len(src);
+    size_t stride = spda_stride(src);
+    size_t arr_size = capacity * stride;
+    size_t header_size = sizeof(size_t) * FIELD_COUNT;
+    
+    void *_dst = _spda_create(capacity, stride);
+    if (_dst == NULL)
+    {
+        raise("SPDA_COPY", "Failed to allocate memory for the new array.");
+        return NULL;
+    }
+    memcpy(_dst, (size_t *)src - FIELD_COUNT, arr_size + header_size);
+    _spda_field_set(_dst, LENGTH, length);
+    return (void *)((size_t *)_dst + FIELD_COUNT);
+}
 
 void spda_sort(void *array, int (*compar)(const void *, const void *))
 {   
-    qsort(array, spda_len(array), spda_stride(array), compar);
+    if (!array) {
+        raise("SPDA_SORTING", "Array is NULL!");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t length = spda_len(array);
+    size_t stride = spda_stride(array);
+
+    qsort(array, length, stride, compar);
+}
+
+void spda_print_metadata(void *array)
+{   
+    if (!array)
+    {
+        raise("SPDA_UNINITIALISED", "array not initialised properly!");
+        exit(EXIT_FAILURE);
+    }
+    /* Printing the Metadata of the array */
+    printf("Capacity: %zu, Length: %zu, Stride: %zu\n", 
+        spda_cap(array), spda_len(array), spda_stride(array));
 }
 
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem))

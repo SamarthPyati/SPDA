@@ -1,8 +1,8 @@
 /*
-** A Generic Dynamic Array Implementation in C **
-    - Author: Samarth Pyati 
-    - Date  : 26-07-2024
-    - Version : 1.0
+** @brief: A Generic Dynamic Array Implementation in C **
+    @Author: Samarth Pyati 
+    @Date  : 26-07-2024
+    @Version : 1.0
 */
 
 #ifndef SPDA_H_
@@ -58,8 +58,10 @@ void *_spda_remove_ret(void *array, int idx, void *dest);    // return the poppe
 
 
 // Utilities 
-void spda_sort(void *array, int (*compar)(const void *, const void *));  // qsort (wrapper)
-
+void *spda_copy(void *src);
+void *spda_search(void *array, const void *target);                       // TODO: binary search 
+void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort (wrapper)
+void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
 
@@ -68,7 +70,7 @@ void spda_clear(void *array);
     (type *) _spda_create(SPDA_DEF_CAPACITY, sizeof(type))
 
 #define spda_reserve(type, capacity) \
-    _spda_create(capacity, sizeof(type))
+    _spda_create(capacity, sizeof(type))    
 
 #define spda_destroy(array)  _spda_destroy(array)
 
