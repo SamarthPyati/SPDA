@@ -225,8 +225,8 @@ void spda_print_metadata(void *array)
         exit(EXIT_FAILURE);
     }
     /* Printing the Metadata of the array */
-    printf("Capacity: %zu, Length: %zu, Stride: %zu\n", 
-        spda_cap(array), spda_len(array), spda_stride(array));
+    printf("Capacity: %zu, Length: %zu, Stride (bits): %zu\n", 
+        spda_cap(array), spda_len(array), spda_stride(array) * 8);
 }
 
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
@@ -237,4 +237,30 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
         spdaElemPrinter(p);
     }
     printf("\n");
+}
+
+// Default spdaElemPrinter Functions for conveinience
+void printInt(void* elem)
+{
+    printf("%d ", *(int *)elem);
+}
+
+void printFloat(void *elem)
+{
+    printf("%f ", *(float *)elem);
+}
+
+void printDouble(void *elem)
+{
+    printf("%lf ", *(double *)elem);
+}
+
+void printChar(void *elem)
+{
+    printf("%c ", *(char *)elem);
+}
+
+void printStr(void *elem)
+{
+    printf("%s\n", *(const char **)elem);
 }

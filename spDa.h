@@ -65,6 +65,13 @@ void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
 
+// Default Printer Functions
+void printInt(void* elem);
+void printFloat(void *elem);
+void printDouble(void *elem);
+void printChar(void *elem);
+void printStr(void *elem);
+
 // MACROS 
 #define spda_create(type) \
     (type *) _spda_create(SPDA_DEF_CAPACITY, sizeof(type))
@@ -80,10 +87,10 @@ void spda_clear(void *array);
         array = _spda_append(array, &temp);      \
     } while (0)
 
-#define spda_append_many(array, ...) \
-    do { \
-        __typeof__(*array) _temp[] = {__VA_ARGS__}; \
-        array = _spda_append_many(array, _temp, sizeof(_temp) / sizeof(_temp[0])); \
+#define spda_append_many(array, ...)                                                        \
+    do {                                                                                    \
+        __typeof__(*array) _temp[] = {__VA_ARGS__};                                         \
+        array = _spda_append_many(array, _temp, sizeof(_temp) / sizeof(_temp[0]));          \
     } while (0)
 
 #define spda_pop(array) _spda_pop(array)

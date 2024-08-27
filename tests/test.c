@@ -3,21 +3,11 @@
 #include <math.h>
 #include "../spDa.h"
 
-// Helper function to print doubles
-void print_double(void *elem) {
-    printf("%.2f", *(double*)elem);
-}
 
 // Helper function to compare doubles with a small epsilon for floating-point precision
 int double_equals(double a, double b) {
     return fabs(a - b) < 1e-9;
 }
-
-void printInt(void *elem)
-{
-    printf("%d ", *(int *)elem);
-}
-
 int comparInt(const void *a, const void *b)
 {
     return *(int *)a - *(int *)b;
@@ -40,8 +30,8 @@ int main() {
 
     // Test print
     printf("Array contents: ");
-    spda_print(array, print_double);
-    printf("\n");
+    spda_print(array, printDouble);
+    printf("\n");   
 
     // Test insert
     spda_insert(array, 5, 100.75);
