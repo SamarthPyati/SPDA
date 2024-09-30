@@ -51,7 +51,7 @@ void *_spda_resize(void *array)
     header = realloc(header, new_size);
     if (header == NULL)
     {
-        raise("MEM_ALLOCATION","Failed to realloc the header and the array.");
+        raise("MEM_ALLOCATION", "Failed to realloc the header and the array.");
         exit(EXIT_FAILURE);
     }
     header[CAPACITY] = new_cap;
@@ -264,3 +264,35 @@ void printStr(void *elem)
 {
     printf("%s\n", *(const char **)elem);
 }
+
+/* Random Function Utilities */
+int get_rand(int min, int max) 
+{
+    return rand() % (max - min + 1) + min;
+}
+
+double get_randf(double min, double max) 
+{
+    float f;
+    f = rand() / (RAND_MAX + 1);
+    return (min + f * (max - min));
+}
+
+void spda_rand(void *array, size_t n, int min, int max)
+{   
+    int rand_val = get_rand(min, max);
+    spda_print_metadata(array);
+    for (size_t i = 0; i < n; ++i)
+    {   
+        spda_append(array, rand_val);
+    }
+    spda_print_metadata(array);
+}   
+
+void spda_randf(void *array, size_t n, double min, double max)
+{
+    for (size_t i = 0; i < n; ++i)
+    {
+        spda_append(array, get_randf(min, max));
+    }
+}   

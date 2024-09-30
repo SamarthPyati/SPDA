@@ -1,5 +1,5 @@
 /*
-** @brief: A Generic Dynamic Array Implementation in C **
+**  @brief: A Generic Dynamic Array Implementation in C **
     @Author: Samarth Pyati 
     @Date  : 26-07-2024
     @Version : 1.0
@@ -64,6 +64,14 @@ void spda_sort(void *array, int (*compar)(const void *, const void *));   // qso
 void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
+
+// Other Functions
+int get_rand(int min, int max);
+double get_randf(double min, double max);
+
+// Random Array 
+void spda_rand(void *array, size_t n, int min, int max);                // Populate Random int array 
+void spda_randf(void *array, size_t n, double min, double max);         // Populate Random double array 
 
 // Default Printer Functions
 void printInt(void* elem);

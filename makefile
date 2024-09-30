@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra 
 LDFLAGS = -lm
 
-BUILDFLAGS = -Wall -Wextra -c -fPIC
+BUILD_DL_FLAGS = -Wall -Wextra -c -fPIC -shared
 
 # Directories
 SRC_DIR = .
@@ -20,7 +20,7 @@ MAIN_TEST = $(BIN_DIR)/main_test
 UTILITY_TEST = $(BIN_DIR)/utility_test
 
 # Targets
-.PHONY: all clean test
+.PHONY: all clean
 
 all: $(BASIC_TEST) $(MAIN_TEST) $(UTILITY_TEST)
 
@@ -37,11 +37,7 @@ $(BIN_DIR):
 	mkdir -p $@
 
 build:
-	$(CC) -shared -o libspda.so -fPIC $(SRC)
-
-test: $(BASIC_TEST) $(MAIN_TEST)
-	./$(BASIC_TEST)
-	./$(MAIN_TEST)
+	$(CC) $(BUILD_DL_FLAGS)  -o libspda.so $(SRC)
 
 clean:
 	rm -rf $(BIN_DIR)
