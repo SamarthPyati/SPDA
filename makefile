@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra 
+CFLAGS = -Wall -Wextra -std=c17
 LDFLAGS = -lm
 
 BUILD_DL_FLAGS = -Wall -Wextra -c -fPIC -shared
@@ -14,10 +14,11 @@ SRC = $(SRC_DIR)/spDa.c
 HEADER = $(SRC_DIR)/spDa.h
 OBJ = $(SRC_DIR)/spDa.o
 
-# Test executables
+# Executables
 BASIC_TEST = $(BIN_DIR)/basic_test
 MAIN_TEST = $(BIN_DIR)/main_test
 UTILITY_TEST = $(BIN_DIR)/utility_test
+PLAYGROUND = $(BIN_DIR)/playground
 
 # Targets
 .PHONY: all clean
@@ -36,7 +37,11 @@ $(UTILITY_TEST): $(SRC) $(TEST_DIR)/utility.c $(HEADER) | $(BIN_DIR)
 $(BIN_DIR):
 	mkdir -p $@
 
-build:
+play:
+	$(CC) $(CFLAGS) -o ./tests/playground ./tests/playground.c $(SRC)
+
+
+build_dl:
 	$(CC) $(BUILD_DL_FLAGS)  -o libspda.so $(SRC)
 
 clean:

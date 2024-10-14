@@ -18,13 +18,6 @@ typedef struct
     double a;
 } Color;
 
-void printMetadata(void *array)
-{   
-    /* Printing the Metadata of the array */
-    printf("Capacity: %zu, Length: %zu, Stride: %zu\n", 
-        spda_cap(array), spda_len(array), spda_stride(array));
-}
-
 void printPoint3D(void *p)
 {       
     /* Printer funciton for Point3D struct */
@@ -44,8 +37,8 @@ int main(void)
     Color *colors = spda_create(Color);
 
     // Print array metadata like length, capacity & stride
-    printMetadata(points);
-    printMetadata(colors);
+    spda_print_metadata(points);
+    spda_print_metadata(colors);
     
     // Initialize some points
     Point3D pa = {1, 3, 4};
@@ -73,8 +66,8 @@ int main(void)
     spda_print(colors, printColor);
 
     printf("\n");
-    printMetadata(points);
-    printMetadata(colors);
+    spda_print_metadata(points);
+    spda_print_metadata(colors);
 
     // Copy the array
     printf("Original Arrays: \n");

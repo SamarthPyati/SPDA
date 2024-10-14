@@ -2,9 +2,6 @@
 
 A Generic, lightweight and efficient dynamic array implementation in C.
 
-> [!NOTE]
-> spDa: 'Samarth Pyati Dynamic Array'    
-
 ### Installation
 
 1. Clone the repository:
@@ -78,10 +75,6 @@ int main() {
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-## Author
-
-Samarth Sanjay Pyati
 
 ## Acknowledgments
 - Inspired by the dynamic array implementation of [Travis Vroman`s](https://github.com/travisvroman/kohi/blob/main/kohi.core/src/containers/darray.h) game engine.

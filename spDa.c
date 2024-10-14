@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "spDa.h"
 
-
 void *_spda_create(size_t cap, size_t stride)
 {
     size_t header_size = FIELD_COUNT * sizeof(size_t);
@@ -17,7 +16,7 @@ void *_spda_create(size_t cap, size_t stride)
     array[CAPACITY] = cap;
     array[LENGTH] = 0;
     array[STRIDE] = stride;
-    return (void *)(array + FIELD_COUNT);
+    return (void *)((size_t *)array + FIELD_COUNT);
 }
 
 void _spda_destroy(void *array)
@@ -41,7 +40,7 @@ void _spda_field_set(void *array, size_t field, size_t value)
 void *_spda_resize(void *array)
 {   
     size_t *header = (size_t *)array - FIELD_COUNT;
-    size_t new_cap = header[CAPACITY] * SPDA_GROWTH_FACTOR;         // cap * 2
+    size_t new_cap = header[CAPACITY] * SPDA_GROWTH_FACTOR;      
     size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
     if (header == NULL) 
     {
@@ -55,7 +54,7 @@ void *_spda_resize(void *array)
         exit(EXIT_FAILURE);
     }
     header[CAPACITY] = new_cap;
-    return (void *)(header + FIELD_COUNT);
+    return (void *)((size_t *)header + FIELD_COUNT);
 }
 
 void *_spda_append(void *array, const void* value)
@@ -271,28 +270,31 @@ int get_rand(int min, int max)
     return rand() % (max - min + 1) + min;
 }
 
-double get_randf(double min, double max) 
+float get_randf(float min, float max) 
 {
     float f;
-    f = rand() / (RAND_MAX + 1);
+    f = ((float)rand() / ((float)RAND_MAX + 1));
     return (min + f * (max - min));
 }
 
-void spda_rand(void *array, size_t n, int min, int max)
+/**
+ * @brief Populates a spda with n random integers between min and max
+ */
+void spda_rand(int **array, size_t n, int min, int max)
 {   
-    int rand_val = get_rand(min, max);
-    spda_print_metadata(array);
     for (size_t i = 0; i < n; ++i)
     {   
-        spda_append(array, rand_val);
+        int random_value = get_rand(min, max);
+        *array = _spda_append(*array, &random_value);
     }
-    spda_print_metadata(array);
-}   
+}
 
-void spda_randf(void *array, size_t n, double min, double max)
-{
-    for (size_t i = 0; i < n; ++i)
-    {
-        spda_append(array, get_randf(min, max));
+
+void spda_randf(float **array, size_t n, float min, float max)
+{   
+    for (size_t i = 0; i < n; ++i)  
+    {   
+        float random_value = get_randf(min, max);
+        *array = _spda_append(*array, &random_value);
     }
-}   
+}

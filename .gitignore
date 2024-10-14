@@ -3,3 +3,6 @@
 basic
 bin
 *.o
+tests/playground
+tests/playground.c
+

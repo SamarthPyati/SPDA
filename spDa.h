@@ -1,8 +1,8 @@
 /*
 **  @brief: A Generic Dynamic Array Implementation in C **
-    @Author: Samarth Pyati 
-    @Date  : 26-07-2024
-    @Version : 1.0
+*   @Author: Samarth Pyati 
+*   @Date : 02-10-2024
+*   @Version : 1.3
 */
 
 #ifndef SPDA_H_
@@ -11,11 +11,11 @@
 #include <stdio.h>          // size_t 
 
 /* 
-** Memory Layout **
-size_t capacity = max elements that array can contain;
-size_t length = number of elements the array actually contains;
-size_t stride = size of each items in array;
-void *elements;
+** Memory Layout -
+* size_t capacity = max elements that array can contain;
+* size_t length = number of elements the array actually contains;
+* size_t stride = size of each items in array;
+* void *elements;
 */
 
 typedef enum {
@@ -25,7 +25,7 @@ typedef enum {
     FIELD_COUNT             // number of fields
 } SPDA_FIELD;
 
-#define SPDA_DEF_CAPACITY 1
+#define SPDA_DEF_CAPACITY 1        
 #define SPDA_GROWTH_FACTOR 2
 
 #define raise(etype, msg)                                              \
@@ -34,7 +34,7 @@ typedef enum {
     } while (0)                                                        
 
 // Find the lenght of vanilla c arrays
-#define ARRAY_LEN(xs) (sizeof((xs)) / sizeof((xs)[0]))
+#define CARRAY_LEN(xs) (sizeof((xs)) / sizeof((xs)[0]))
 
 void *_spda_create(size_t cap, size_t stride);
 void _spda_destroy(void *array);
@@ -42,7 +42,6 @@ void _spda_destroy(void *array);
 size_t _spda_field_get(void *array, size_t field);
 void _spda_field_set(void *array, size_t field, size_t value);
 
-// Resize the array by growth factor (TODO: Make this take a arg)
 void *_spda_resize(void *array);
 void *_spda_resize_spec(void *array, size_t size);      // resize the array by a specific amount 
 
@@ -59,19 +58,19 @@ void *_spda_remove_ret(void *array, int idx, void *dest);    // return the poppe
 
 // Utilities 
 void *spda_copy(void *src);
-void *spda_search(void *array, const void *target);                       // TODO: binary search 
-void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort (wrapper)
+void *spda_search(void *array, const void *target);                       
+void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort
 void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
 
-// Other Functions
+// Random Helper Functions
 int get_rand(int min, int max);
-double get_randf(double min, double max);
+float get_randf(float min, float max);
 
 // Random Array 
-void spda_rand(void *array, size_t n, int min, int max);                // Populate Random int array 
-void spda_randf(void *array, size_t n, double min, double max);         // Populate Random double array 
+void spda_rand(int **array, size_t n, int min, int max);                    // Populate Random int array 
+void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
 // Default Printer Functions
 void printInt(void* elem);
@@ -85,20 +84,20 @@ void printStr(void *elem);
     (type *) _spda_create(SPDA_DEF_CAPACITY, sizeof(type))
 
 #define spda_reserve(type, capacity) \
-    _spda_create(capacity, sizeof(type))    
+    (type *) _spda_create(capacity, sizeof(type))    
 
 #define spda_destroy(array)  _spda_destroy(array)
 
-#define spda_append(array, value)                \
-    do {                                         \
-        __auto_type temp = value;                \
-        array = _spda_append(array, &temp);      \
+#define spda_append(array, value)                    \
+    do {                                             \
+        __auto_type temp = (value);                  \
+        (array) = _spda_append((array), &temp);      \
     } while (0)
 
-#define spda_append_many(array, ...)                                                        \
-    do {                                                                                    \
-        __typeof__(*array) _temp[] = {__VA_ARGS__};                                         \
-        array = _spda_append_many(array, _temp, sizeof(_temp) / sizeof(_temp[0]));          \
+#define spda_append_many(array, ...)                                        \
+    do {                                                                    \
+        __typeof__(*(array)) _temp[] = {__VA_ARGS__};                       \
+        (array) = _spda_append_many((array), _temp, CARRAY_LEN(_temp));     \
     } while (0)
 
 #define spda_pop(array) _spda_pop(array)
@@ -106,26 +105,26 @@ void printStr(void *elem);
 
 #define spda_insert(array, idx, value)           \
     do {                                         \
-        __auto_type temp = value;                \
-        array = _spda_insert(array, idx, &temp); \
+        __auto_type temp = (value);                \
+        (array) = _spda_insert((array), (idx), &temp); \
     } while (0)
 
-#define spda_remove(array, idx) _spda_remove(array, idx)
-#define spda_remove_ret(array, idx, dest) _spda_remove_ret(array, idx, dest)
+#define spda_remove(array, idx) _spda_remove((array), idx)
+#define spda_remove_ret(array, idx, dest) _spda_remove_ret((array), idx, dest)
 
 #define spda_clear(array) \
-    _spda_field_set(array, LENGTH, 0)
+    _spda_field_set((array), LENGTH, 0)
 
 #define spda_set_length(array, value) \
-    _spda_field_set(array, LENGTH, value)
+    _spda_field_set((array), LENGTH, value)
 
 #define spda_len(array) \
-    _spda_field_get(array, LENGTH)
+    _spda_field_get((array), LENGTH)
 
 #define spda_cap(array) \
-    _spda_field_get(array, CAPACITY)
+    _spda_field_get((array), CAPACITY)
 
 #define spda_stride(array) \
-    _spda_field_get(array, STRIDE)
+    _spda_field_get((array), STRIDE)
 
 #endif // SPDA_H_
