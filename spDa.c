@@ -109,7 +109,6 @@ void *_spda_append_many(void *array, void *items, size_t item_count)
     return array;
 }
 
-
 void _spda_pop(void *array)
 {   
     size_t length = spda_len(array);
@@ -131,7 +130,6 @@ void _spda_pop_ret(void *array, void *dest)
     memcpy(dest, (char *)array + length * stride, stride);
     _spda_field_set(array, LENGTH, length - 1);
 }
-
 
 void *_spda_insert(void *array, int idx, const void* value)
 {
@@ -238,7 +236,7 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
     printf("\n");
 }
 
-// Default spdaElemPrinter Functions for conveinience
+/* Default `spdaElemPrinter` functions for convenience */
 void printInt(void* elem)
 {
     printf("%d ", *(int *)elem);
@@ -277,9 +275,7 @@ float get_randf(float min, float max)
     return (min + f * (max - min));
 }
 
-/**
- * @brief Populates a spda with n random integers between min and max
- */
+/* Generating random arrays */
 void spda_rand(int **array, size_t n, int min, int max)
 {   
     for (size_t i = 0; i < n; ++i)

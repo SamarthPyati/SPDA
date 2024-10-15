@@ -18,7 +18,6 @@ OBJ = $(SRC_DIR)/spDa.o
 BASIC_TEST = $(BIN_DIR)/basic_test
 MAIN_TEST = $(BIN_DIR)/main_test
 UTILITY_TEST = $(BIN_DIR)/utility_test
-PLAYGROUND = $(BIN_DIR)/playground
 
 # Targets
 .PHONY: all clean

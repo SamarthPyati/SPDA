@@ -1,8 +1,8 @@
 /*
 **  @brief: A Generic Dynamic Array Implementation in C **
 *   @Author: Samarth Pyati 
-*   @Date : 02-10-2024
-*   @Version : 1.3
+*   @Date : 15-10-2024
+*   @Version : 1.4
 */
 
 #ifndef SPDA_H_
@@ -33,7 +33,7 @@ typedef enum {
         fprintf(stderr, "%s:%s\n", etype, msg);                        \
     } while (0)                                                        
 
-// Find the lenght of vanilla c arrays
+// Length for vanilla c arrays
 #define CARRAY_LEN(xs) (sizeof((xs)) / sizeof((xs)[0]))
 
 void *_spda_create(size_t cap, size_t stride);
@@ -69,7 +69,7 @@ int get_rand(int min, int max);
 float get_randf(float min, float max);
 
 // Random Array 
-void spda_rand(int **array, size_t n, int min, int max);                    // Populate Random int array 
+void spda_rand(int **array, size_t n, int min, int max);                 // Populate Random int array 
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
 // Default Printer Functions
@@ -100,13 +100,18 @@ void printStr(void *elem);
         (array) = _spda_append_many((array), _temp, CARRAY_LEN(_temp));     \
     } while (0)
 
+#define spda_append_items(array, items, count)                            \
+    do {                                                                  \
+            (array) = _spda_append_many((array), (items), (count));       \
+    } while (0);                                                          
+
 #define spda_pop(array) _spda_pop(array)
 #define spda_pop_ret(array, dest) _spda_pop_ret(array, dest)
 
-#define spda_insert(array, idx, value)           \
-    do {                                         \
-        __auto_type temp = (value);                \
-        (array) = _spda_insert((array), (idx), &temp); \
+#define spda_insert(array, idx, value)                      \
+    do {                                                    \
+        __auto_type temp = (value);                         \
+        (array) = _spda_insert((array), (idx), &temp);      \
     } while (0)
 
 #define spda_remove(array, idx) _spda_remove((array), idx)

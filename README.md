@@ -8,11 +8,30 @@ A Generic, lightweight and efficient dynamic array implementation in C.
    ```
    git clone https://github.com/SamarthPyati/spda
    ```
-2. Include `spDa.h` in your project.
+
+2. Compilation 
+```
+make build                  // for building dynamic library 
+```
+3. Include `spDa.h` in your project and link with dynamic library.
 
 ## Usage
 
 Basic Example:
+
+```c 
+#include <stdio.h>
+#include "spDa.h"
+
+int main(void)
+{   
+    int *array = spda_create(int);
+    spda_destroy(array);
+    return 0;
+}
+```
+
+Complex Example:
 
 ```c
 #include "spDa.h"
