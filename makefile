@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c17
 LDFLAGS = -lm
 
-BUILD_DL_FLAGS = -Wall -Wextra -c -fPIC -shared
+BUILD_DL_FLAGS = -Wall -Wextra -shared -fPIC
 
 # Directories
 SRC_DIR = .
@@ -40,8 +40,8 @@ play:
 	$(CC) $(CFLAGS) -o ./tests/playground ./tests/playground.c $(SRC)
 
 
-build_dl:
-	$(CC) $(BUILD_DL_FLAGS)  -o libspda.so $(SRC)
+build:
+	$(CC) $(BUILD_DL_FLAGS) -o libspda.so $(SRC)
 
 clean:
 	rm -rf $(BIN_DIR)

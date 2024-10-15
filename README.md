@@ -1,6 +1,6 @@
 # spDa 
 
-A Generic, lightweight and efficient dynamic array implementation in C.
+A simple generic implementation of dynamic array in C. 
 
 ### Installation
 
@@ -10,10 +10,12 @@ A Generic, lightweight and efficient dynamic array implementation in C.
    ```
 
 2. Compilation 
+
+Build the dynamic Library
 ```
-make build                  // for building dynamic library 
+make build                  
 ```
-3. Include `spDa.h` in your project and link with dynamic library.
+3. Include `spDa.h` in your project and link with dynamic library by `-lspda`.
 
 ## Usage
 
@@ -24,9 +26,36 @@ Basic Example:
 #include "spDa.h"
 
 int main(void)
-{   
-    int *array = spda_create(int);
-    spda_destroy(array);
+{      
+    srand(time(NULL));  // Set random seed 
+    // Elements to add in array 
+    int items[10] = {3, 48, 1, 34, 0, 12, 3, 4, -1, -100};
+
+    // Create array and print array metadata 
+    int *a = spda_create(int);
+    spda_print_metadata(a);
+    
+    spda_append_items(a, items, CARRAY_LEN(items));     // append items[] to array 
+    spda_print(a, printInt);
+    
+    spda_append_many(a, 0, 0, 0, 0);                    // append variadic elements 
+    spda_print(a, printInt);
+
+
+    for (int i = 0; i < 3; ++i) spda_pop(a);            // pop last 3 elements
+    spda_print(a, printInt);
+
+    for (int i = 0; i < 3; ++i) spda_remove(a, 0);      // remove first 3 elements
+    spda_print(a, printInt);
+
+    for (int i = 0; i < 3; ++i)                         // insert 3 elements with value 1000 into 3 index
+        spda_insert(a, 3, 1000);        
+    spda_print(a, printInt);
+
+    spda_clear(a);                                      // clear all elements 
+    spda_print(a, printInt);
+
+    spda_destroy(a);
     return 0;
 }
 ```
@@ -75,6 +104,7 @@ int main() {
 
 - `spda_append(array, value)`: Append a value to the end of the array
 - `spda_append_many(array, ...)`: Append all variadic number of values to the end of the array
+- `spda_append_items(array, items, count)`: Append `count` number of items from array `items` to end of the array 
 - `spda_pop(array)`: Remove the last element from the array
 - `spda_pop_ret(array)`: Remove the last element from the array and returns the value
 - `spda_insert(array, idx, value)`: Insert a value at the specified index
