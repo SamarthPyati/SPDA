@@ -2,20 +2,33 @@
 
 A simple generic implementation of dynamic array in C. 
 
-### Installation
+## Memory Layout
+
+```
+            ARRAY METADATA                               ELEMENTS
+ +---------------------------------------+---------------------------------------+
+ |  capacity   |  length   |  stride     |               elements                |
+ +---------------------------------------+---------------------------------------+
+ |  (size_t)   |  (size_t) |  (size_t)   |               (void *)                |
+ +---------------------------------------+---------------------------------------+
+                                         ^
+                                     array pointer 
+```
+
+## Installation
 
 1. Clone the repository:
    ```
    git clone https://github.com/SamarthPyati/spda
    ```
 
-2. Compilation 
+2. Compilation:
 
 Build the dynamic Library
 ```
 make build                  
 ```
-3. Include `spDa.h` in your project and link with dynamic library by `-lspda`.
+3. Include `spDa.h` and `libspda.so` in your project and link with dynamic library by `-lspda`.
 
 ## Usage
 
@@ -51,6 +64,12 @@ int main(void)
     for (int i = 0; i < 3; ++i)                         // insert 3 elements with value 1000 into 3 index
         spda_insert(a, 3, 1000);        
     spda_print(a, printInt);
+
+    int item;
+    spda_foreach(a, item) {                             // iterate array with foreach
+        printf("%d ", item *= 2);
+    }
+    printf("\n");
 
     spda_clear(a);                                      // clear all elements 
     spda_print(a, printInt);
@@ -121,10 +140,13 @@ int main() {
 
 - `spda_print(array, spdaElemPrinter)`: Print the contents of the array using a custom 'spdaElemPrinter' printer function
 
+## Iteration
+
+- `spda_foreach(array, item)`: Iterate over each element in the array
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 - Inspired by the dynamic array implementation of [Travis Vroman`s](https://github.com/travisvroman/kohi/blob/main/kohi.core/src/containers/darray.h) game engine.
-

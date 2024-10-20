@@ -11,11 +11,21 @@
 #include <stdio.h>          // size_t 
 
 /* 
-** Memory Layout -
+** Memory Layout **
 * size_t capacity = max elements that array can contain;
 * size_t length = number of elements the array actually contains;
 * size_t stride = size of each items in array;
-* void *elements;
+* void *elements = elements in array;
+*
+*  Structure of the array: 
+*                 METADATA                                 ELEMENTS
+*  +---------------------------------------+---------------------------------------+
+*  |  capacity   |  length   |  stride     |               elements                |
+*  +---------------------------------------+---------------------------------------+
+*  |  (size_t)   |  (size_t) |  (size_t)   |               (void *)                |
+*  +---------------------------------------+---------------------------------------+
+*                                          ^
+*                                      array pointer 
 */
 
 typedef enum {
@@ -58,7 +68,7 @@ void *_spda_remove_ret(void *array, int idx, void *dest);    // return the poppe
 
 // Utilities 
 void *spda_copy(void *src);
-void *spda_search(void *array, const void *target);                       
+void *spda_search(void *array, const void *target); // TODO                      
 void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort
 void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
@@ -72,7 +82,7 @@ float get_randf(float min, float max);
 void spda_rand(int **array, size_t n, int min, int max);                 // Populate Random int array 
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
-// Default Printer Functions
+// Default Element Printer Functions
 void printInt(void* elem);
 void printFloat(void *elem);
 void printDouble(void *elem);
@@ -113,6 +123,9 @@ void printStr(void *elem);
         __auto_type temp = (value);                         \
         (array) = _spda_insert((array), (idx), &temp);      \
     } while (0)
+
+#define spda_foreach(array, item)                           \
+    for (unsigned int i = 0; i < spda_len(array) && ((item=array[i]), 1); i++)
 
 #define spda_remove(array, idx) _spda_remove((array), idx)
 #define spda_remove_ret(array, idx, dest) _spda_remove_ret((array), idx, dest)
