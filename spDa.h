@@ -1,8 +1,8 @@
 /*
 **  @brief: A Generic Dynamic Array Implementation in C **
 *   @Author: Samarth Pyati 
-*   @Date : 15-10-2024
-*   @Version : 1.4
+*   @Date : 22-12-2024
+*   @Version : 1.5
 */
 
 #ifndef SPDA_H_
@@ -83,11 +83,18 @@ void spda_rand(int **array, size_t n, int min, int max);                 // Popu
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
 // Default Element Printer Functions
-void printInt(void* elem);
-void printFloat(void *elem);
-void printDouble(void *elem);
-void printChar(void *elem);
-void printStr(void *elem);
+
+void _printInt(void *elem);
+void _printFloat(void *elem);
+void _printDouble(void *elem);
+void _printChar(void *elem);
+void _printStr(void *elem);
+
+#define printInt _printInt
+#define printFloat _printFloat
+#define printDouble _printDouble
+#define printChar _printChar
+#define printStr _printStr
 
 // MACROS 
 #define spda_create(type) \

@@ -237,27 +237,27 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
 }
 
 /* Default `spdaElemPrinter` functions for convenience */
-void printInt(void* elem)
+void _printInt(void *elem)
 {
     printf("%d ", *(int *)elem);
 }
 
-void printFloat(void *elem)
+void _printFloat(void *elem)
 {
     printf("%f ", *(float *)elem);
 }
 
-void printDouble(void *elem)
+void _printDouble(void *elem)
 {
     printf("%lf ", *(double *)elem);
 }
 
-void printChar(void *elem)
+void _printChar(void *elem)
 {
     printf("%c ", *(char *)elem);
 }
 
-void printStr(void *elem)
+void _printStr(void *elem)
 {
     printf("%s\n", *(const char **)elem);
 }
@@ -284,7 +284,6 @@ void spda_rand(int **array, size_t n, int min, int max)
         *array = _spda_append(*array, &random_value);
     }
 }
-
 
 void spda_randf(float **array, size_t n, float min, float max)
 {   
