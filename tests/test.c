@@ -56,7 +56,7 @@ int main() {
 
     // Test resize
     size_t old_cap = spda_cap(array);
-    array = _spda_resize(array);
+    array = _spda_resize_def(array);
     assert(spda_cap(array) == old_cap * SPDA_GROWTH_FACTOR);
 
 

@@ -58,8 +58,8 @@ size_t _spda_field_get(void *array, size_t field);
 void _spda_field_set(void *array, size_t field, size_t value);
 
 /* Memory Operations */
-void *_spda_resize(void *array);
-void *_spda_resize_spec(void *array, size_t size);      // resize the array by a specific amount 
+void *_spda_resize(void *array, size_t size);     
+void *_spda_resize_def(void *array);
 void *_spda_shrink(void *array); // TODO
 
 /* Array Operations */
@@ -71,26 +71,29 @@ void *_spda_insert(void *array, int idx, const void* value);
 void *_spda_remove(void *array, int idx);
 
 void _spda_pop_ret(void *array, void *dest);                 // return the popped item
-void *_spda_remove_ret(void *array, int idx, void *dest);    // return the popped item
+void *_spda_remove_ret(void *array, int idx, void *dest);    // return the removed item
 
-
-// Utilities 
-void *spda_copy(void *src);
-void *spda_search(void *array, const void *target); // TODO                      
+/* Sort and search */
 void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort  
-void spda_print_metadata(void *array);
-void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
+void *spda_search(void *array, const void *target); // TODO                      
+
+/* Utilities */ 
+void *spda_copy(void *src);
 void spda_clear(void *array);
 
-// Random Helper Functions
+void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
+void spda_print_metadata(void *array);
+
+/* Random Helper Functions */ 
 int get_rand(int min, int max);
 float get_randf(float min, float max);
 
-// Random Array 
+/* Random Array Generation */
 void spda_rand(int **array, size_t n, int min, int max);                 // Populate Random int array 
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
-// Default Element Printer Functions
+
+/* Default datatype element printer */
 void _printInt(void *elem);
 void _printFloat(void *elem);
 void _printDouble(void *elem);
@@ -137,10 +140,6 @@ void _printStr(void *elem);
         __auto_type temp = (value);                         \
         (array) = _spda_insert((array), (idx), &temp);      \
     } while (0)
-
-#define spda_foreach(type, array)                           \
-    size_t kji = 0;                                         \
-    for ((type) item = array[kji]; kji < spda_len(array) ; ++kji)
 
 #define spda_remove(array, idx) _spda_remove((array), idx)
 #define spda_remove_ret(array, idx, dest) _spda_remove_ret((array), idx, dest)

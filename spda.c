@@ -40,7 +40,7 @@ void _spda_destroy(void *array)
 
 size_t _spda_field_get(void *array, size_t field)
 {
-    if (!_spda_is_valid(array)) return 0;
+    if (!_spda_is_valid(array)) return -1;
     size_t* header = (size_t *)array - FIELD_COUNT;
     return header[field];
 }
@@ -52,7 +52,7 @@ void _spda_field_set(void *array, size_t field, size_t value)
     header[field] = value;
 }
 
-void *_spda_resize(void *array)
+void *_spda_resize_def(void *array)
 {   
     if (!_spda_is_valid(array)) return NULL;
 
@@ -61,17 +61,44 @@ void *_spda_resize(void *array)
     size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
     if (header == NULL) 
     {
-        raise("MEM_ALLOCATION", "Header was not allocated properly."); 
-        exit(EXIT_FAILURE);
+        raise("MEM_ALLOCATION", "Array header was not allocated properly."); 
+        return NULL;
     }
+
     header = realloc(header, new_size);
+    
     if (header == NULL)
     {
-        raise("MEM_ALLOCATION", "Failed to realloc the header and the array.");
-        exit(EXIT_FAILURE);
+        raise("MEM_ALLOCATION", "Failed to reallocate the header and the array.");
+        return NULL;
     }
     header[CAPACITY] = new_cap;
     return (void *)((size_t *)header + FIELD_COUNT);
+}
+
+void *_spda_resize(void *array, size_t size)
+{
+    if (!_spda_is_valid(array)) return NULL;
+
+    size_t *header = (size_t *)array - FIELD_COUNT;
+    size_t new_cap = size;         
+    size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
+    if (header == NULL) 
+    {
+        raise("MEM_ALLOCATION", "Array header was not allocated properly."); 
+        return NULL;
+    }
+
+    header = realloc(header, new_size);
+
+    if (header == NULL)
+    {
+        raise("MEM_ALLOCATION", "Failed to reallocate the header and the array.");
+        return NULL;
+    }
+
+    header[CAPACITY] = new_cap;
+    return (void *)(header + FIELD_COUNT);
 }
 
 void *_spda_append(void *array, const void* value)
@@ -81,7 +108,7 @@ void *_spda_append(void *array, const void* value)
     size_t capacity = spda_cap(array);
     if (length >= capacity)
     {
-        void *new_array = _spda_resize(array);
+        void *new_array = _spda_resize_def(array);
         if (new_array == NULL) {
             raise("MEM_ALLOCATION", "Failed to resize array");
             return array;  // Return original array if resize fails
@@ -92,26 +119,6 @@ void *_spda_append(void *array, const void* value)
     memcpy((char*)array + length * stride, value, stride);
     _spda_field_set(array, LENGTH, length + 1);     // increment length
     return array;
-}
-
-void *_spda_resize_spec(void *array, size_t size)
-{
-    size_t *header = (size_t *)array - FIELD_COUNT;
-    size_t new_cap = size;         
-    size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
-    if (header == NULL) 
-    {
-        raise("MEM_ALLOCATION", "Header was not allocated properly."); 
-        exit(EXIT_FAILURE);
-    }
-    header = realloc(header, new_size);
-    if (header == NULL)
-    {
-        raise("MEM_ALLOCATION","Failed to realloc the header and the array.");
-        exit(EXIT_FAILURE);
-    }
-    header[CAPACITY] = new_cap;
-    return (void *)(header + FIELD_COUNT);
 }
 
 void *_spda_append_many(void *array, void *items, size_t item_count)
@@ -130,7 +137,7 @@ void _spda_pop(void *array)
 {   
     size_t length = spda_len(array);
     if (length == 0) {
-        raise("INDEX_OUT_OF_BOUNDS", "Cannot pop elements from an empty array."); 
+        raise("INDEX_OUT_OF_BOUNDS", "Cannot pop elements from an empty array"); 
         return;
     }
     _spda_field_set(array, LENGTH, length - 1);
@@ -141,7 +148,7 @@ void _spda_pop_ret(void *array, void *dest)
     size_t length = spda_len(array);
     size_t stride = spda_stride(array);
     if (length == 0) {
-        raise("INDEX_OUT_OF_BOUNDS","Cannot pop elements from an empty array."); 
+        raise("INDEX_OUT_OF_BOUNDS","Cannot pop elements from an empty array"); 
         return;
     }
     memcpy(dest, (char *)array + length * stride, stride);
@@ -154,12 +161,12 @@ void *_spda_insert(void *array, int idx, const void* value)
     size_t stride = spda_stride(array);
     size_t capacity = spda_cap(array);
     if (idx < 0 || (size_t)idx > length) {
-        raise("INDEX_OUT_OF_BOUNDS","Index out of bounds for insert.");
+        raise("INDEX_OUT_OF_BOUNDS", "Index out of bounds for insert");
         return array;
     }
     if (length >= capacity)
     {
-        array = _spda_resize(array);
+        array = _spda_resize_def(array);
     }
     memmove((char *)array + (idx + 1) * stride, (char *)array + idx * stride, (length - idx) * stride);
     memcpy((char *)array + idx * stride, value, stride);
@@ -172,7 +179,7 @@ void *_spda_remove(void *array, int idx)
     size_t length = spda_len(array);
     size_t stride = spda_stride(array);
     if (idx < 0 || (size_t)idx >= length) {
-        raise("INDEX_OUT_OF_BOUNDS","Index out of bounds for remove.");
+        raise("INDEX_OUT_OF_BOUNDS", "Index out of bounds for remove");
         return array;
     }
     memmove((char *)array + idx * stride, (char *)array + (idx + 1) * stride, (length - idx - 1) * stride);
@@ -185,7 +192,7 @@ void *_spda_remove_ret(void *array, int idx, void *dest)
     size_t length = spda_len(array);
     size_t stride = spda_stride(array);
     if (idx < 0 || (size_t)idx >= length) {
-        raise("INDEX_OUT_OF_BOUNDS", "Index out of bounds for remove.");
+        raise("INDEX_OUT_OF_BOUNDS", "Index out of bounds for remove");
         return array;
     }
     memcpy(dest, (char *)array + idx * stride, stride);
@@ -197,7 +204,7 @@ void *_spda_remove_ret(void *array, int idx, void *dest)
 void *spda_copy(void *src)
 {
     if (src == NULL) {
-        raise("SPDA_COPY_ERR", "source array is NULL!");
+        raise("SPDA_COPY_ERR", "source array is NULL");
         return NULL;
     }
 
