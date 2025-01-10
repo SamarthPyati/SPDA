@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "../spDa.h"
+#include "../spda.h"
 
 typedef struct 
 {

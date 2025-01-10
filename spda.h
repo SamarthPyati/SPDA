@@ -1,14 +1,15 @@
 /*
 **  @brief: A Generic Dynamic Array Implementation in C **
 *   @Author: Samarth Pyati 
-*   @Date : 22-12-2024
-*   @Version : 1.5
+*   @Date : 10-01-2025
+*   @Version : 1.7
 */
 
 #ifndef SPDA_H_
 #define SPDA_H_
 
 #include <stdio.h>          // size_t 
+#include <stdbool.h>        // bool
 
 /* 
 ** Memory Layout **
@@ -35,26 +36,33 @@ typedef enum {
     FIELD_COUNT             // number of fields
 } SPDA_FIELD;
 
-#define SPDA_DEF_CAPACITY 1        
+#define SPDA_DEFAULT_CAPACITY 8
 #define SPDA_GROWTH_FACTOR 2
 
-#define raise(etype, msg)                                              \
-    do {                                                               \
-        fprintf(stderr, "%s:%s\n", etype, msg);                        \
-    } while (0)                                                        
+/* ERROR HANDLING */
+#define raise(etype, msg)                                                               \
+    do {                                                                                \
+        fprintf(stderr, "%s:%d [%s] - %s\n", __FILE__, __LINE__, etype, msg);           \
+    } while (0)                                                         
 
 // Length for vanilla c arrays
 #define CARRAY_LEN(xs) (sizeof((xs)) / sizeof((xs)[0]))
 
+/* Core Operations */
 void *_spda_create(size_t cap, size_t stride);
 void _spda_destroy(void *array);
+bool _spda_is_valid(const void *array);
 
+/* Field Operations */
 size_t _spda_field_get(void *array, size_t field);
 void _spda_field_set(void *array, size_t field, size_t value);
 
+/* Memory Operations */
 void *_spda_resize(void *array);
 void *_spda_resize_spec(void *array, size_t size);      // resize the array by a specific amount 
+void *_spda_shrink(void *array); // TODO
 
+/* Array Operations */
 void *_spda_append(void *array, const void* value);
 void *_spda_append_many(void *array, void *items, size_t item_count);
 void _spda_pop(void *array);
@@ -69,7 +77,7 @@ void *_spda_remove_ret(void *array, int idx, void *dest);    // return the poppe
 // Utilities 
 void *spda_copy(void *src);
 void *spda_search(void *array, const void *target); // TODO                      
-void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort
+void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort  
 void spda_print_metadata(void *array);
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_clear(void *array);
@@ -83,7 +91,6 @@ void spda_rand(int **array, size_t n, int min, int max);                 // Popu
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
 
 // Default Element Printer Functions
-
 void _printInt(void *elem);
 void _printFloat(void *elem);
 void _printDouble(void *elem);
@@ -96,9 +103,9 @@ void _printStr(void *elem);
 #define printChar _printChar
 #define printStr _printStr
 
-// MACROS 
+/* Macros */
 #define spda_create(type) \
-    (type *) _spda_create(SPDA_DEF_CAPACITY, sizeof(type))
+    (type *) _spda_create(SPDA_DEFAULT_CAPACITY, sizeof(type))
 
 #define spda_reserve(type, capacity) \
     (type *) _spda_create(capacity, sizeof(type))    
@@ -131,8 +138,9 @@ void _printStr(void *elem);
         (array) = _spda_insert((array), (idx), &temp);      \
     } while (0)
 
-#define spda_foreach(array, item)                           \
-    for (unsigned int i = 0; i < spda_len(array) && ((item=array[i]), 1); i++)
+#define spda_foreach(type, array)                           \
+    size_t kji = 0;                                         \
+    for ((type) item = array[kji]; kji < spda_len(array) ; ++kji)
 
 #define spda_remove(array, idx) _spda_remove((array), idx)
 #define spda_remove_ret(array, idx, dest) _spda_remove_ret((array), idx, dest)

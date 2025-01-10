@@ -1,18 +1,30 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "spDa.h"
+#include "spda.h"
+
+bool _spda_is_valid(const void *array) {
+    if (!array) return false;
+    size_t *header = (size_t *)array - FIELD_COUNT;
+    return header && header[STRIDE] > 0;
+}
 
 void *_spda_create(size_t cap, size_t stride)
-{
+{   
+    if (cap < SPDA_DEFAULT_CAPACITY) cap = SPDA_DEFAULT_CAPACITY;
+    if (stride == 0) {
+        raise("INVALID_ARGUMENT", "Stride (size of datatype) cannot be zero");
+        return NULL;
+    }
     size_t header_size = FIELD_COUNT * sizeof(size_t);
     size_t array_size = cap * stride;
     size_t *array = (size_t *) malloc(header_size + array_size);
-    if (!array)
-    {
+
+    if (!array) {
         raise("MEM_ALLOCATION", "Failed memory allocation for dynamic array.");
-        exit(EXIT_FAILURE);
+        return NULL;
     }
+
     array[CAPACITY] = cap;
     array[LENGTH] = 0;
     array[STRIDE] = stride;
@@ -21,26 +33,31 @@ void *_spda_create(size_t cap, size_t stride)
 
 void _spda_destroy(void *array)
 {   
+    if (!_spda_is_valid(array)) return;
     size_t* header = (size_t *)array - FIELD_COUNT;
     free(header);
 }
 
 size_t _spda_field_get(void *array, size_t field)
 {
+    if (!_spda_is_valid(array)) return 0;
     size_t* header = (size_t *)array - FIELD_COUNT;
     return header[field];
 }
 
 void _spda_field_set(void *array, size_t field, size_t value)
 {
+    if (!_spda_is_valid(array)) return;
     size_t* header = (size_t *)array - FIELD_COUNT;
     header[field] = value;
 }
 
 void *_spda_resize(void *array)
 {   
+    if (!_spda_is_valid(array)) return NULL;
+
     size_t *header = (size_t *)array - FIELD_COUNT;
-    size_t new_cap = header[CAPACITY] * SPDA_GROWTH_FACTOR;      
+    size_t new_cap = (size_t) header[CAPACITY] * SPDA_GROWTH_FACTOR;      
     size_t new_size = (FIELD_COUNT * sizeof(size_t)) + (new_cap * header[STRIDE]);
     if (header == NULL) 
     {

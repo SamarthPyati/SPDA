@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
-#include "../spDa.h"
+#include "../spda.h"
 
 
 // Helper function to compare doubles with a small epsilon for floating-point precision
@@ -17,7 +17,7 @@ int main() {
     // Test creation
     double *array = spda_create(double);
     assert(spda_len(array) == 0);
-    assert(spda_cap(array) == SPDA_DEF_CAPACITY);
+    assert(spda_cap(array) == SPDA_DEFAULT_CAPACITY);
     assert(spda_stride(array) == sizeof(double));
 
     // Test append
