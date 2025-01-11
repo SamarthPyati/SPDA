@@ -72,6 +72,7 @@ void *_spda_remove(void *array, int idx);
 
 void _spda_pop_ret(void *array, void *dest);                 // return the popped item
 void *_spda_remove_ret(void *array, int idx, void *dest);    // return the removed item
+void _spda_reverse(void *array);                             // reverse array inplace
 
 /* Sort and search */
 void spda_sort(void *array, int (*compar)(const void *, const void *));   // qsort  
@@ -80,7 +81,6 @@ void *spda_search(void *array, const void *target); // TODO
 /* Utilities */ 
 void *spda_copy(void *src);
 void spda_clear(void *array);
-
 void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_print_metadata(void *array);
 
@@ -143,6 +143,9 @@ void _printStr(void *elem);
 
 #define spda_remove(array, idx) _spda_remove((array), idx)
 #define spda_remove_ret(array, idx, dest) _spda_remove_ret((array), idx, dest)
+
+#define spda_reverse(array) \
+    _spda_reverse((array))
 
 #define spda_clear(array) \
     _spda_field_set((array), LENGTH, 0)

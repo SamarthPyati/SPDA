@@ -3,76 +3,179 @@
 #include <math.h>
 #include "../spda.h"
 
+#define RED         "\x1B[31m"
+#define GREEN       "\x1B[32m"
+#define YELLOW      "\x1B[33m"
+#define BLUE        "\x1B[34m"
+#define MAGENTA     "\x1B[35m"
+#define CYAN        "\x1B[36m"
+#define WHITE       "\x1B[37m"
+#define RESET       "\x1B[0m"
 
 // Helper function to compare doubles with a small epsilon for floating-point precision
 int double_equals(double a, double b) {
     return fabs(a - b) < 1e-9;
 }
-int comparInt(const void *a, const void *b)
-{
+
+// Helper function for integer comparison
+int comparInt(const void *a, const void *b) {
     return *(int *)a - *(int *)b;
 }
 
-int main() {
-    // Test creation
+// Helper macro for test results with error messages
+#define TEST_ASSERT(cond, pass_msg, fail_msg) do { \
+    if (!(cond)) { \
+        printf(RED"Test failed: "RESET"%s\n", fail_msg); \
+        assert(cond); \
+    } else { \
+        printf(GREEN"Test passed: "RESET"%s\n", pass_msg); \
+    } \
+} while (0)
+
+// Operation functions for double array
+void test_create_array() {
+    printf("\nTesting array creation...\n");
     double *array = spda_create(double);
-    assert(spda_len(array) == 0);
-    assert(spda_cap(array) == SPDA_DEFAULT_CAPACITY);
-    assert(spda_stride(array) == sizeof(double));
+    TEST_ASSERT(spda_len(array) == 0, 
+                "Initial length is zero", 
+                "Expected initial length to be zero, but it was not");
+    TEST_ASSERT(spda_cap(array) == SPDA_DEFAULT_CAPACITY, 
+                "Initial capacity is correct", 
+                "Expected initial capacity to match default capacity");
+    TEST_ASSERT(spda_stride(array) == sizeof(double), 
+                "Stride matches sizeof(double)", 
+                "Stride did not match sizeof(double)");
+    spda_destroy(array);
+}
 
-    // Test append
+void test_append_array() {
+    printf("\nTesting append operation...\n");
+    double *array = spda_create(double);
     for (int i = 0; i < 10; i++) {
-        double value = i + 0.5;
-        spda_append(array, value);
+        spda_append(array, i + 0.5);
     }
-    assert(spda_len(array) == 10);
-    assert(spda_cap(array) >= 10);
+    TEST_ASSERT(spda_len(array) == 10, 
+                "Length after append is correct", 
+                "Expected length to be 10 after append");
+    TEST_ASSERT(spda_cap(array) >= 10, 
+                "Capacity adjusts correctly", 
+                "Capacity did not adjust correctly after append");
+    spda_destroy(array);
+}
 
-    // Test print
-    printf("Array contents: ");
-    spda_print(array, printDouble);
-    printf("\n");   
-
-    // Test insert
+void test_insert_array() {
+    printf("\nTesting insert operation...\n");
+    double *array = spda_create(double);
+    for (int i = 0; i < 10; i++) {
+        spda_append(array, i + 0.5);
+    }
     spda_insert(array, 5, 100.75);
-    assert(spda_len(array) == 11);
-    assert(double_equals(array[5], 100.75));
+    TEST_ASSERT(spda_len(array) == 11, 
+                "Length after insert is correct", 
+                "Expected length to be 11 after insert");
+    TEST_ASSERT(double_equals(array[5], 100.75), 
+                "Inserted value is correct", 
+                "Inserted value did not match expected value");
+    spda_destroy(array);
+}
 
-    // Test remove
+void test_remove_array() {
+    printf("\nTesting remove operation...\n");
+    double *array = spda_create(double);
+    for (int i = 0; i < 10; i++) {
+        spda_append(array, i + 0.5);
+    }
     double removed;
     spda_remove_ret(array, 5, &removed);
-    assert(spda_len(array) == 10);
-    assert(double_equals(removed, 100.75));
+    TEST_ASSERT(spda_len(array) == 9, 
+                "Length after remove is correct", 
+                "Expected length to be 9 after remove");
+    TEST_ASSERT(double_equals(removed, 5.5), 
+                "Removed value is correct", 
+                "Removed value did not match expected value");
+    spda_destroy(array);
+}
 
-    // Test pop
+void test_reverse_array() {
+    printf("\nTesting reverse operation...\n");
+    double *array = spda_create(double);
+    for (int i = 0; i < 5; i++) {
+        spda_append(array, i + 0.5);
+    }
+    spda_reverse(array);
+    for (int i = 0; i < 5; i++) {
+        TEST_ASSERT(double_equals(array[i], 4.5 - i), 
+                    "Reversed array contents are correct", 
+                    "Array contents after reverse did not match expected");
+    }
+    spda_destroy(array);
+}
+
+void test_pop_array() {
+    printf("\nTesting pop operation...\n");
+    double *array = spda_create(double);
+    for (int i = 0; i < 5; i++) {
+        spda_append(array, i + 0.5);
+    }
     double popped;
     _spda_pop_ret(array, &popped);
-    assert(spda_len(array) == 9);
-    assert(double_equals(popped, 9.5));
+    TEST_ASSERT(spda_len(array) == 4, 
+                "Length after pop is correct", 
+                "Expected length to be 4 after pop");
+    TEST_ASSERT(double_equals(popped, 4.5), 
+                "Popped value is correct", 
+                "Popped value did not match expected value");
+    spda_destroy(array);
+}
 
-    // Test clear
+void test_clear_array() {
+    printf("\nTesting clear operation...\n");
+    double *array = spda_create(double);
+    for (int i = 0; i < 5; i++) {
+        spda_append(array, i + 0.5);
+    }
     spda_clear(array);
-    assert(spda_len(array) == 0);
+    TEST_ASSERT(spda_len(array) == 0, 
+                "Length after clear is zero", 
+                "Expected length to be zero after clear");
+    spda_destroy(array);
+}
 
-    // Test resize
+void test_resize_array() {
+    printf("\nTesting resize operation...\n");
+    double *array = spda_create(double);
     size_t old_cap = spda_cap(array);
     array = _spda_resize_def(array);
-    assert(spda_cap(array) == old_cap * SPDA_GROWTH_FACTOR);
-
-
-    // Test destruction
+    TEST_ASSERT(spda_cap(array) == old_cap * SPDA_GROWTH_FACTOR, 
+                "Capacity after resize is correct", 
+                "Capacity did not grow correctly after resize");
     spda_destroy(array);
+}
 
-    // Sorting the array 
-    int *a = spda_create(int);
-    spda_append_many(a, 1, 31, 57, 1, 9, 0, 12, 4, -1, -10);
-    printf("Before: ");
-    spda_print(a, printInt);
-    spda_sort(a, comparInt);
-    spda_print(a, printInt);
+void test_sort_integer_array() {
+    printf("\nTesting sort operation...\n");
+    int *array = spda_create(int);
+    spda_append_many(array, 3, 1, 4, 1, 5, 9, 2, 6, 5, 3);
+    spda_sort(array, comparInt);
+    for (size_t i = 1; i < spda_len(array); i++) {
+        TEST_ASSERT(array[i - 1] <= array[i], 
+                    "Array is sorted correctly", 
+                    "Array contents were not sorted correctly");
+    }
+    spda_destroy(array);
+}
 
-
-    printf("\nAll tests passed successfully!\n");
- 
+// Main test suite
+int main() {
+    test_create_array();
+    test_append_array();
+    test_insert_array();
+    test_remove_array();
+    test_reverse_array();
+    test_pop_array();
+    test_clear_array();
+    test_resize_array();
+    test_sort_integer_array();
+    printf(GREEN"\nAll tests passed successfully!\n"RESET);
     return 0;
 }

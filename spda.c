@@ -113,7 +113,7 @@ void *_spda_append(void *array, const void* value)
             raise("MEM_ALLOCATION", "Failed to resize array");
             return array;  // Return original array if resize fails
         }
-        array = new_array;
+        array = new_array;  
     }
 
     memcpy((char*)array + length * stride, value, stride);
@@ -151,7 +151,7 @@ void _spda_pop_ret(void *array, void *dest)
         raise("INDEX_OUT_OF_BOUNDS","Cannot pop elements from an empty array"); 
         return;
     }
-    memcpy(dest, (char *)array + length * stride, stride);
+    memcpy(dest, (char *)array + ((length - 1) * stride), stride);
     _spda_field_set(array, LENGTH, length - 1);
 }
 
@@ -199,6 +199,28 @@ void *_spda_remove_ret(void *array, int idx, void *dest)
     memmove((char *)array + idx * stride, (char *)array + (idx + 1) * stride, (length - idx - 1) * stride);
     _spda_field_set(array, LENGTH, length - 1);
     return array;
+}
+
+void _spda_reverse(void *array) {
+    if (!_spda_is_valid(array)) return;
+    
+    size_t stride = spda_stride(array);
+    size_t len = spda_len(array);
+    char *temp = malloc(stride);
+
+    if (!temp) {
+        raise("MEM_ALLOCATION", "Failed to allocate temporary buffer");
+        return;
+    }
+
+    for (size_t i = 0; i < len / 2; ++i) {
+        char *a = (char *)array + i * stride;
+        char *b = (char *)array + ((len - i - 1) * stride);   
+        memcpy(temp, a, stride);
+        memcpy(a, b, stride);
+        memcpy(b, temp, stride);
+    }
+    free(temp);
 }
 
 void *spda_copy(void *src)
