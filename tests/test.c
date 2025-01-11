@@ -33,7 +33,7 @@ int comparInt(const void *a, const void *b) {
 } while (0)
 
 // Operation functions for double array
-void test_create_array() {
+void test_create() {
     printf("\nTesting array creation...\n");
     double *array = spda_create(double);
     TEST_ASSERT(spda_len(array) == 0, 
@@ -48,7 +48,7 @@ void test_create_array() {
     spda_destroy(array);
 }
 
-void test_append_array() {
+void test_append() {
     printf("\nTesting append operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 10; i++) {
@@ -63,7 +63,7 @@ void test_append_array() {
     spda_destroy(array);
 }
 
-void test_insert_array() {
+void test_insert() {
     printf("\nTesting insert operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 10; i++) {
@@ -79,7 +79,7 @@ void test_insert_array() {
     spda_destroy(array);
 }
 
-void test_remove_array() {
+void test_remove() {
     printf("\nTesting remove operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 10; i++) {
@@ -96,7 +96,7 @@ void test_remove_array() {
     spda_destroy(array);
 }
 
-void test_reverse_array() {
+void test_reverse() {
     printf("\nTesting reverse operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 5; i++) {
@@ -115,7 +115,7 @@ void test_reverse_array() {
     spda_destroy(array);
 }
 
-void test_pop_array() {
+void test_pop() {
     printf("\nTesting pop operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 5; i++) {
@@ -132,7 +132,7 @@ void test_pop_array() {
     spda_destroy(array);
 }
 
-void test_clear_array() {
+void test_clear() {
     printf("\nTesting clear operation...\n");
     double *array = spda_create(double);
     for (int i = 0; i < 5; i++) {
@@ -145,7 +145,7 @@ void test_clear_array() {
     spda_destroy(array);
 }
 
-void test_resize_array() {
+void test_resize() {
     printf("\nTesting resize operation...\n");
     double *array = spda_create(double);
     size_t old_cap = spda_cap(array);
@@ -156,7 +156,7 @@ void test_resize_array() {
     spda_destroy(array);
 }
 
-void test_sort_integer_array() {
+void test_sort_integer() {
     printf("\nTesting sort operation...\n");
     int *array = spda_create(int);
     spda_append_many(array, 3, 1, 4, 1, 5, 9, 2, 6, 5, 3);
@@ -173,7 +173,7 @@ void test_sort_integer_array() {
     spda_destroy(array);
 }
 
-void test_shrink_array() {
+void test_shrink() {
     printf("\nTesting shrink operation...\n");
 
     int *array = spda_create(int);
@@ -212,18 +212,38 @@ void test_shrink_array() {
     spda_destroy(array);
 }
 
+void test_foreach() {
+    printf("\nTesting spda_foreach macro...\n");
+    int *array = spda_create(int);
+    spda_append_many(array, 1, 2, 3, 4, 5);
+
+    int sum = 0;
+    spda_foreach(int, array, item) {
+        sum += item;
+    }
+
+    TEST_ASSERT(sum == 15,
+                "spda_foreach iterates correctly and computes the sum",
+                "spda_foreach failed to iterate correctly or compute the sum");
+
+    spda_destroy(array);
+}
+
+
 // Main test suite
-int main() {
-    test_create_array();
-    test_append_array();
-    test_insert_array();
-    test_remove_array();
-    test_reverse_array();
-    test_pop_array();
-    test_clear_array();
-    test_resize_array();
-    test_sort_integer_array();
-    test_shrink_array();
+int main(void) {
+    test_create();
+    test_append();
+    test_insert();
+    test_remove();
+    test_reverse();
+    test_pop();
+    test_clear();
+    test_resize();
+    test_sort_integer();
+    test_shrink();
+    test_foreach();
+
     printf(GREEN"\nAll tests passed successfully!\n"RESET);
     return 0;
 }

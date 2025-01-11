@@ -2,17 +2,19 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c17
 LDFLAGS = -lm
 
-BUILD_DL_FLAGS = -Wall -Wextra -shared -fPIC
+BUILD_DL_FLAGS = -Wall -Wextra -shared -fPIC -O3
 
 # Directories
 SRC_DIR = .
 TEST_DIR = tests
 BIN_DIR = bin
+BUILD_DIR = build
 
 # Source files
 SRC = $(SRC_DIR)/spDa.c
 HEADER = $(SRC_DIR)/spDa.h
 OBJ = $(SRC_DIR)/spDa.o
+DLIB = $(BUILD_DIR)/libspda.so
 
 # Executables
 BASIC_TEST = $(BIN_DIR)/basic_test
@@ -39,9 +41,8 @@ $(BIN_DIR):
 play:
 	$(CC) $(CFLAGS) -o ./tests/playground ./tests/playground.c $(SRC)
 
-
-build:
-	$(CC) $(BUILD_DL_FLAGS) -o libspda.so $(SRC)
-
+build: $(BUILD_DIR)
+	$(CC) $(BUILD_DL_FLAGS) -o $(DLIB) $(SRC)
+	
 clean:
 	rm -rf $(BIN_DIR)

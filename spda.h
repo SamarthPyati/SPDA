@@ -136,6 +136,14 @@ void _printStr(void *elem);
 #define spda_pop(array) _spda_pop(array)
 #define spda_pop_ret(array, dest) _spda_pop_ret(array, dest)
 
+#define spda_foreach(type, array, varname) \
+    for (size_t _spda_idx = 0; \
+         _spda_is_valid(array) && _spda_idx < spda_len(array); \
+         ++_spda_idx) \
+        for (type varname = (array)[_spda_idx], *_spda_flag = (type*)1; \
+             _spda_flag; \
+             _spda_flag = NULL)
+
 #define spda_insert(array, idx, value)                      \
     do {                                                    \
         __auto_type temp = (value);                         \
