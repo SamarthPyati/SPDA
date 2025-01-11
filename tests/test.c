@@ -103,11 +103,15 @@ void test_reverse_array() {
         spda_append(array, i + 0.5);
     }
     spda_reverse(array);
+    bool success = true;
     for (int i = 0; i < 5; i++) {
-        TEST_ASSERT(double_equals(array[i], 4.5 - i), 
-                    "Reversed array contents are correct", 
-                    "Array contents after reverse did not match expected");
+        if (!double_equals(array[i], 4.5 - i)) {
+            success = false;
+        }
     }
+    TEST_ASSERT(success, 
+                "Reversed array contents are correct", 
+                "Array contents after reverse did not match expected");
     spda_destroy(array);
 }
 
@@ -157,11 +161,54 @@ void test_sort_integer_array() {
     int *array = spda_create(int);
     spda_append_many(array, 3, 1, 4, 1, 5, 9, 2, 6, 5, 3);
     spda_sort(array, comparInt);
+    bool success = true;
     for (size_t i = 1; i < spda_len(array); i++) {
-        TEST_ASSERT(array[i - 1] <= array[i], 
-                    "Array is sorted correctly", 
-                    "Array contents were not sorted correctly");
+        if (!(array[i - 1] <= array[i])) {
+            success = false;
+        }
     }
+    TEST_ASSERT(success, 
+                "Array is sorted correctly", 
+                "Array contents were not sorted correctly");
+    spda_destroy(array);
+}
+
+void test_shrink_array() {
+    printf("\nTesting shrink operation...\n");
+
+    int *array = spda_create(int);
+
+    // Append a large number of elements
+    for (size_t i = 0; i < 100; i++) {
+        spda_append(array, i);
+    }
+
+    size_t original_cap = spda_cap(array);
+    TEST_ASSERT(original_cap >= 100, 
+                "Initial capacity is sufficient", 
+                "Initial capacity is less than expected");
+
+    // Remove elements to make the array sparse
+    for (size_t i = 0; i < 80; i++) {
+        spda_pop(array);
+    }
+
+    TEST_ASSERT(spda_len(array) == 20, 
+                "Array length after pop is correct", 
+                "Array length did not match expected value after pop");
+
+    // Shrink the array to fit its current size
+    array = spda_shrink(array);
+    size_t shrunk_cap = spda_cap(array);
+
+    TEST_ASSERT(shrunk_cap >= spda_len(array) && shrunk_cap < original_cap, 
+                "Array capacity is reduced after shrinking", 
+                "Capacity was not reduced after shrinking");
+
+    TEST_ASSERT(spda_len(array) == 20, 
+                "Array length remains unchanged after shrinking", 
+                "Array length changed unexpectedly after shrinking");
+
     spda_destroy(array);
 }
 
@@ -176,6 +223,7 @@ int main() {
     test_clear_array();
     test_resize_array();
     test_sort_integer_array();
+    test_shrink_array();
     printf(GREEN"\nAll tests passed successfully!\n"RESET);
     return 0;
 }

@@ -37,7 +37,8 @@ typedef enum {
 } SPDA_FIELD;
 
 #define SPDA_DEFAULT_CAPACITY 8
-#define SPDA_GROWTH_FACTOR 2
+#define SPDA_GROWTH_FACTOR 2    
+#define SPDA_SHRINK_THRESHOLD 0.25 // if array utilisation falls below 25% shrink the capacity of array 
 
 /* ERROR HANDLING */
 #define raise(etype, msg)                                                               \
@@ -58,20 +59,21 @@ size_t _spda_field_get(void *array, size_t field);
 void _spda_field_set(void *array, size_t field, size_t value);
 
 /* Memory Operations */
-void *_spda_resize(void *array, size_t size);     
 void *_spda_resize_def(void *array);
-void *_spda_shrink(void *array); // TODO
+void *_spda_resize(void *array, size_t size);     
+void *spda_shrink(void *array);
 
 /* Array Operations */
 void *_spda_append(void *array, const void* value);
 void *_spda_append_many(void *array, void *items, size_t item_count);
-void _spda_pop(void *array);
-
 void *_spda_insert(void *array, int idx, const void* value);
-void *_spda_remove(void *array, int idx);
 
+void _spda_pop(void *array);
 void _spda_pop_ret(void *array, void *dest);                 // return the popped item
+
+void *_spda_remove(void *array, int idx);
 void *_spda_remove_ret(void *array, int idx, void *dest);    // return the removed item
+
 void _spda_reverse(void *array);                             // reverse array inplace
 
 /* Sort and search */
@@ -91,7 +93,6 @@ float get_randf(float min, float max);
 /* Random Array Generation */
 void spda_rand(int **array, size_t n, int min, int max);                 // Populate Random int array 
 void spda_randf(float **array, size_t n, float min, float max);          // Populate Random double array 
-
 
 /* Default datatype element printer */
 void _printInt(void *elem);

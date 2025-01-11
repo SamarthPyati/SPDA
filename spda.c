@@ -101,8 +101,27 @@ void *_spda_resize(void *array, size_t size)
     return (void *)(header + FIELD_COUNT);
 }
 
+void *spda_shrink(void *array) {
+    /* Array shrink to fit for efficient memory utilization */
+    if (!_spda_is_valid(array)) return NULL;
+
+    size_t len = spda_len(array);
+    size_t cap = spda_cap(array);
+
+    if (len > 0 && len < (size_t)(cap * SPDA_SHRINK_THRESHOLD)) {
+        size_t new_cap = len * 2 > SPDA_DEFAULT_CAPACITY ? len * 2 : SPDA_DEFAULT_CAPACITY;
+        array = _spda_resize(array, new_cap);
+    }
+    return array;
+}
+
 void *_spda_append(void *array, const void* value)
 {   
+    if (!_spda_is_valid(array) || !value) {
+        raise("INVALID_ARGUMENT", "Invalid array or value");
+        return array;
+    }
+
     size_t length = spda_len(array);
     size_t stride = spda_stride(array);
     size_t capacity = spda_cap(array);
