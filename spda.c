@@ -245,7 +245,7 @@ void _spda_reverse(void *array) {
 void *spda_copy(void *src)
 {
     if (src == NULL) {
-        raise("SPDA_COPY_ERR", "source array is NULL");
+        raise("INVALID_SOURCE", "source array is NULL");
         return NULL;
     }
 
@@ -258,7 +258,7 @@ void *spda_copy(void *src)
     void *_dst = _spda_create(capacity, stride);
     if (_dst == NULL)
     {
-        raise("SPDA_COPY", "Failed to allocate memory for the new array.");
+        raise("MEM_ALLOCATION", "Failed to allocate memory for the new array");
         return NULL;
     }
     memcpy(_dst, (size_t *)src - FIELD_COUNT, arr_size + header_size);
@@ -269,7 +269,7 @@ void *spda_copy(void *src)
 void spda_sort(void *array, int (*compar)(const void *, const void *))
 {   
     if (!array) {
-        raise("SPDA_SORTING", "Array is NULL!");
+        raise("INVALID_SOURCE", "Source array cannot be null");
         exit(EXIT_FAILURE);
     }
 
@@ -283,7 +283,7 @@ void spda_print_metadata(void *array)
 {   
     if (!array)
     {
-        raise("SPDA_UNINITIALISED", "array not initialised properly!");
+        raise("INVALID_SOURCE", "Source array cannot be null");
         exit(EXIT_FAILURE);
     }
     /* Printing the Metadata of the array */
