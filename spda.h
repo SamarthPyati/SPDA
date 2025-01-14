@@ -5,8 +5,8 @@
 *   @Version : 1.7
 */
 
-#ifndef SPDA_H_
-#define SPDA_H_
+#ifndef SPDA_H
+#define SPDA_H
 
 #include <stdio.h>          // size_t 
 #include <stdbool.h>        // bool
@@ -69,7 +69,7 @@ void *_spda_append_many(void *array, void *items, size_t item_count);
 void *_spda_insert(void *array, int idx, const void* value);
 
 void _spda_pop(void *array);
-void _spda_pop_ret(void *array, void *dest);                 // return the popped item
+bool _spda_pop_ret(void *array, void *dest);                 // return the popped item
 
 void *_spda_remove(void *array, int idx);
 void *_spda_remove_ret(void *array, int idx, void *dest);    // return the removed item
@@ -136,12 +136,12 @@ void _printStr(void *elem);
 #define spda_pop(array) _spda_pop(array)
 #define spda_pop_ret(array, dest) _spda_pop_ret(array, dest)
 
-#define spda_foreach(type, array, varname) \
-    for (size_t _spda_idx = 0; \
-         _spda_is_valid(array) && _spda_idx < spda_len(array); \
-         ++_spda_idx) \
-        for (type varname = (array)[_spda_idx], *_spda_flag = (type*)1; \
-             _spda_flag; \
+#define spda_foreach(type, array, varname)                                  \
+    for (size_t _spda_idx = 0;                                              \
+         _spda_is_valid(array) && _spda_idx < spda_len(array);              \
+         ++_spda_idx)                                                       \
+        for (type varname = (array)[_spda_idx], *_spda_flag = (type*)1;     \
+             _spda_flag;                                                    \
              _spda_flag = NULL)
 
 #define spda_insert(array, idx, value)                      \
@@ -171,4 +171,4 @@ void _printStr(void *elem);
 #define spda_stride(array) \
     _spda_field_get((array), STRIDE)
 
-#endif // SPDA_H_
+#endif // SPDA_H

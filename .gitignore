@@ -2,6 +2,7 @@
 .vscode
 basic
 bin
+ex.*
 *.o
 tests/playground
 tests/playground.c

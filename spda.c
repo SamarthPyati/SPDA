@@ -16,6 +16,7 @@ void *_spda_create(size_t cap, size_t stride)
         raise("INVALID_ARGUMENT", "Stride (size of datatype) cannot be zero");
         return NULL;
     }
+    
     size_t header_size = FIELD_COUNT * sizeof(size_t);
     size_t array_size = cap * stride;
     size_t *array = (size_t *) malloc(header_size + array_size);
@@ -162,16 +163,27 @@ void _spda_pop(void *array)
     _spda_field_set(array, LENGTH, length - 1);
 }
 
-void _spda_pop_ret(void *array, void *dest) 
-{
-    size_t length = spda_len(array);
-    size_t stride = spda_stride(array);
-    if (length == 0) {
-        raise("INDEX_OUT_OF_BOUNDS","Cannot pop elements from an empty array"); 
-        return;
+bool _spda_pop_ret(void *array, void *dest) 
+{   
+    if (!array) {
+        raise("INVALID_SOURCE", "Source array cannot be NULL");
+        return false;
     }
-    memcpy(dest, (char *)array + ((length - 1) * stride), stride);
+
+    size_t length = spda_len(array);
+
+    if (length == 0) {
+        raise("INDEX_OUT_OF_BOUNDS", "Cannot pop elements from an empty array"); 
+        return false;
+    }
+
+    if (dest) {
+        size_t stride = spda_stride(array);
+        memcpy(dest, (char *)array + ((length - 1) * stride), stride);
+    } 
+
     _spda_field_set(array, LENGTH, length - 1);
+    return true;
 }
 
 void *_spda_insert(void *array, int idx, const void* value)
@@ -245,7 +257,7 @@ void _spda_reverse(void *array) {
 void *spda_copy(void *src)
 {
     if (src == NULL) {
-        raise("INVALID_SOURCE", "source array is NULL");
+        raise("INVALID_SOURCE", "Source array cannot be NULL");
         return NULL;
     }
 
@@ -269,7 +281,7 @@ void *spda_copy(void *src)
 void spda_sort(void *array, int (*compar)(const void *, const void *))
 {   
     if (!array) {
-        raise("INVALID_SOURCE", "Source array cannot be null");
+        raise("INVALID_SOURCE", "Source array cannot be NULL");
         exit(EXIT_FAILURE);
     }
 
@@ -283,7 +295,7 @@ void spda_print_metadata(void *array)
 {   
     if (!array)
     {
-        raise("INVALID_SOURCE", "Source array cannot be null");
+        raise("INVALID_SOURCE", "Source array cannot be NULL");
         exit(EXIT_FAILURE);
     }
     /* Printing the Metadata of the array */

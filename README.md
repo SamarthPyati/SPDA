@@ -23,19 +23,40 @@ A **simple and generic implementation of a dynamic array** in C, designed for ea
 
 ## Installation
 
+#### Method 1: Build from Source
 1. **Clone the repository:**
    ```sh
    git clone https://github.com/SamarthPyati/spda
+   cd spda
    ```
 
 2. **Build the dynamic library:**
    ```sh
-   make build
+   make build_lib
    ```
 
-3. **Include in your project:**
+3. **Include the header file and the dynamic library (.so) in your project:**
    - Include `spda.h` in your source files.
    - Link the dynamic library using `-lspda`.
+   ```sh 
+    gcc -o my_program my_program.c -Lbuild -lspda -lm
+   ```
+
+#### Method 2: Manual Integration 
+1. **With source files:**
+    - Copy `spda.h` and `spda.c` into your project directory.
+    - Include `spda.h` in your source files and compile `spda.c` along with your project:
+    ```sh 
+    gcc -o my_program my_program.c spda.c -lm
+    ```
+
+2. **With dynamic library:**
+    - Copy `spda.h` and `build/libspda.so` into your project directory.
+    - Compile by linking the library: 
+    ```sh 
+    gcc -o my_program my_program.c spda.c -lspda -lm
+    ```
+
 
 ## Usage
 
