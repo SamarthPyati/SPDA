@@ -5,8 +5,8 @@
 *   @Version : 1.7
 */
 
-#ifndef SPDA_H
-#define SPDA_H
+#ifndef SPDA_H_
+#define SPDA_H_
 
 #include <stdio.h>          // size_t 
 #include <stdbool.h>        // bool
@@ -52,11 +52,14 @@ typedef enum {
 /* Core Operations */
 void *_spda_create(size_t cap, size_t stride);
 void _spda_destroy(void *array);
-bool _spda_is_valid(const void *array);
+static inline bool _spda_is_valid(const void *array);
 
 /* Field Operations */
 size_t _spda_field_get(void *array, size_t field);
 void _spda_field_set(void *array, size_t field, size_t value);
+size_t spda_len(const void *array);
+size_t spda_cap(const void *array);
+size_t spda_stride(const void *array);
 
 /* Memory Operations */
 void *_spda_resize_def(void *array);
@@ -87,8 +90,8 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem));
 void spda_print_metadata(void *array);
 
 /* Random Helper Functions */ 
-int get_rand(int min, int max);
-float get_randf(float min, float max);
+int randint(int min, int max);
+float randfloat(float min, float max);
 
 /* Random Array Generation */
 void spda_rand(int **array, size_t n, int min, int max);                 // Populate Random int array 
@@ -99,7 +102,7 @@ void _printInt(void *elem);
 void _printFloat(void *elem);
 void _printDouble(void *elem);
 void _printChar(void *elem);
-void _printStr(void *elem);
+void _printStr(void *elem); 
 
 #define printInt _printInt
 #define printFloat _printFloat
@@ -138,11 +141,11 @@ void _printStr(void *elem);
 
 #define spda_foreach(type, array, varname)                                  \
     for (size_t _spda_idx = 0;                                              \
-         _spda_is_valid(array) && _spda_idx < spda_len(array);              \
+         _spda_idx < spda_len(array);                                       \
          ++_spda_idx)                                                       \
         for (type varname = (array)[_spda_idx], *_spda_flag = (type*)1;     \
              _spda_flag;                                                    \
-             _spda_flag = NULL)
+             _spda_flag = NULL)  // FLAG HACK: FIX LATER 
 
 #define spda_insert(array, idx, value)                      \
     do {                                                    \
@@ -162,13 +165,4 @@ void _printStr(void *elem);
 #define spda_set_length(array, value) \
     _spda_field_set((array), LENGTH, value)
 
-#define spda_len(array) \
-    _spda_field_get((array), LENGTH)
-
-#define spda_cap(array) \
-    _spda_field_get((array), CAPACITY)
-
-#define spda_stride(array) \
-    _spda_field_get((array), STRIDE)
-
-#endif // SPDA_H
+#endif // SPDA_H_

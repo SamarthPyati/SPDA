@@ -220,6 +220,7 @@ void test_foreach() {
     int sum = 0;
     spda_foreach(int, array, item) {
         sum += item;
+        printf("Items: %d\n", item);
     }
 
     TEST_ASSERT(sum == 15,

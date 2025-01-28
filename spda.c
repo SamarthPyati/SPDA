@@ -3,10 +3,22 @@
 #include <stdio.h>
 #include "spda.h"
 
-bool _spda_is_valid(const void *array) {
+static inline bool _spda_is_valid(const void *array) {
     if (!array) return false;
     size_t *header = (size_t *)array - FIELD_COUNT;
     return header && header[STRIDE] > 0;
+}
+
+extern inline size_t spda_len(const void *array)  {
+    return _spda_field_get((void *)array, LENGTH);
+}
+
+extern inline size_t spda_cap(const void *array)  {
+    return _spda_field_get((void *)array, CAPACITY);
+}
+
+extern inline size_t spda_stride(const void *array)  {
+    return _spda_field_get((void *)array, STRIDE);
 }
 
 void *_spda_create(size_t cap, size_t stride)
@@ -66,13 +78,14 @@ void *_spda_resize_def(void *array)
         return NULL;
     }
 
-    header = realloc(header, new_size);
-    
-    if (header == NULL)
+    size_t *new_header = realloc(header, new_size);
+    if (new_header == NULL)
     {
         raise("MEM_ALLOCATION", "Failed to reallocate the header and the array.");
         return NULL;
     }
+
+    header = new_header;
     header[CAPACITY] = new_cap;
     return (void *)((size_t *)header + FIELD_COUNT);
 }
@@ -90,13 +103,13 @@ void *_spda_resize(void *array, size_t size)
         return NULL;
     }
 
-    header = realloc(header, new_size);
-
-    if (header == NULL)
+    void *new_header = realloc(header, new_size);
+    if (new_header == NULL)
     {
-        raise("MEM_ALLOCATION", "Failed to reallocate the header and the array.");
+        raise("MEM_ALLOCATION", "Failed to reallocate the array header.");
         return NULL;
     }
+    header = new_header;
 
     header[CAPACITY] = new_cap;
     return (void *)(header + FIELD_COUNT);
@@ -142,7 +155,7 @@ void *_spda_append(void *array, const void* value)
 }
 
 void *_spda_append_many(void *array, void *items, size_t item_count)
-{
+{   
     size_t stride = spda_stride(array);
     char *item_ptr = (char *)items;
     for (size_t i = 0; i < item_count; ++i)
@@ -307,7 +320,7 @@ void spda_print(void *array, void (*spdaElemPrinter)(void *elem))
 {   
     for (size_t i = 0; i < spda_len(array); ++i) 
     {   
-        void *p = (array + i * spda_stride(array));
+        void *p = ((char *)array + i * spda_stride(array));
         spdaElemPrinter(p);
     }
     printf("\n");
@@ -340,12 +353,12 @@ void _printStr(void *elem)
 }
 
 /* Random Function Utilities */
-int get_rand(int min, int max) 
+int randint(int min, int max) 
 {
     return rand() % (max - min + 1) + min;
 }
 
-float get_randf(float min, float max) 
+float randfloat(float min, float max) 
 {
     float f;
     f = ((float)rand() / ((float)RAND_MAX + 1));
@@ -357,7 +370,7 @@ void spda_rand(int **array, size_t n, int min, int max)
 {   
     for (size_t i = 0; i < n; ++i)
     {   
-        int random_value = get_rand(min, max);
+        int random_value = randint(min, max);
         *array = _spda_append(*array, &random_value);
     }
 }
@@ -366,7 +379,7 @@ void spda_randf(float **array, size_t n, float min, float max)
 {   
     for (size_t i = 0; i < n; ++i)  
     {   
-        float random_value = get_randf(min, max);
+        float random_value = randfloat(min, max);
         *array = _spda_append(*array, &random_value);
     }
 }
