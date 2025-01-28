@@ -121,7 +121,7 @@ void _printStr(void *elem);
 
 #define spda_append(array, value)                    \
     do {                                             \
-        __auto_type temp = (value);                  \
+        __typeof__(*(array)) temp = (value);                  \
         (array) = _spda_append((array), &temp);      \
     } while (0)
 
@@ -149,7 +149,7 @@ void _printStr(void *elem);
 
 #define spda_insert(array, idx, value)                      \
     do {                                                    \
-        __auto_type temp = (value);                         \
+        __typeof__(*(array)) temp = (value);                \
         (array) = _spda_insert((array), (idx), &temp);      \
     } while (0)
 
